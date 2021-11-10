@@ -57,7 +57,7 @@ public class Message implements Serializable {
     }
 
     public Object getObject() {
-        return object;
+        return this.object;
     }
 
     public void setObject(Object object) {

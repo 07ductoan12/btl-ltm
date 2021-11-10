@@ -57,6 +57,9 @@ public class PhongView extends javax.swing.JFrame implements ActionListener {
     public void addStartGameListener(ActionListener st) {
         btnStartGame.addActionListener(st);
     }
+    public void addExitListener(ActionListener ex){
+        btnExit.addActionListener(ex);
+    }
 
     public void setTextBtnSS() {
         if (!ss) {
@@ -71,8 +74,6 @@ public class PhongView extends javax.swing.JFrame implements ActionListener {
     public boolean xacNhan() {
         int choice = JOptionPane.showConfirmDialog(this, "thoat phong", "Xac nhan", JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
-            controller.thoatPhong();
-            dispose();
             return true;
         }
         return false;
@@ -84,7 +85,7 @@ public class PhongView extends javax.swing.JFrame implements ActionListener {
 
     public void updateListUser(ArrayList<NguoiChoi> list) {
         model1.setRowCount(0);
-        System.out.println(list.size());
+        System.out.println("update size phong " +list.size());
         this.phong.setDsng(list);
         for (int i = 0; i < list.size(); i++) {
             String str = "";

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author 07duc
  */
 public class Phong implements Serializable {
-
+//    private static long serialVersionUID=21L; 
     private int id;
     private ArrayList<NguoiChoi> dsng;
     private String password;

@@ -27,6 +27,7 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
     DefaultTableModel model3;
     ArrayList<NguoiChoi> userList;
     ArrayList<Phong> listPhong;
+    private boolean inZoom;
 
     public MainView() {
         initComponents();
@@ -38,6 +39,14 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
 //        listUser.add(new NguoiChoi());
 //        listUser.add(new NguoiChoi());
 //        updateListUser(listUser);
+    }
+
+    public void setInZoom(boolean b) {
+        inZoom = b;
+    }
+
+    public boolean getInZomm() {
+        return inZoom;
     }
 
     /**
@@ -259,7 +268,7 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
     public void updateListPhong(ArrayList<Phong> listPhong) {
         model3.setRowCount(0);
         this.listPhong = listPhong;
-        System.out.println("size list phong " +this.listPhong.size());
+        System.out.println("size list phong " + this.listPhong.size());
         for (Phong phong : this.listPhong) {
             String str = "";
             if (phong.getPassword().equals("")) {
@@ -292,8 +301,8 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
         int row = tablePhong.getSelectedRow();
         if (row >= 0) {
             System.out.println(this.listPhong.size());
-            int idphong = (Integer)((DefaultTableModel) tablePhong.getModel()).getValueAt(row, 0);
-            System.out.println("select "+idphong);
+            int idphong = (Integer) ((DefaultTableModel) tablePhong.getModel()).getValueAt(row, 0);
+            System.out.println("select " + idphong);
             for (Phong phong : this.listPhong) {
                 System.out.println(phong.getId());
                 if (phong.getId() == idphong) {

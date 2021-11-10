@@ -37,7 +37,6 @@ public class MainViewController extends Thread {
     private Connection con;
     private ArrayList<NguoiChoi> listUser;
     private NguoiChoi currentUser;
-    private boolean ingame;
     private GameView game;
     private TranDau tranDau;
     private Message response;
@@ -50,8 +49,9 @@ public class MainViewController extends Thread {
         this.con = con;
         this.view = view;
         this.currentUser = currentUser;
-        ingame = false;
         this.view.setVisible(true);
+        view.setInZoom(false);
+        listPhong = new ArrayList<>();
         view.challengeListener(new challenge(view, con));
         view.setUserNameView(currentUser.getFullName());
         view.btnTaoPhong(new taoPhong(view, con, this.currentUser));
@@ -76,7 +76,9 @@ public class MainViewController extends Thread {
         this.tranDau = (TranDau) response.getObject();
 //                        JOptionPane.showMessageDialog(dashboard, "Đối thủ đã chấp nhận yêu cầu thách đấu của bạn!!!");
         view.setVisible(false);
-        if( phongView != null && phongView.isVisible()) phongView.setVisible(false);
+        if (phongView != null && phongView.isVisible()) {
+            phongView.setVisible(false);
+        }
         game = new GameView(tranDau, this, view);
         game.addKeoButtonListener(new ActionListener() {
             @Override
@@ -148,12 +150,10 @@ public class MainViewController extends Thread {
         newTurn();
     }
 
-    public void setIngame(boolean ingame) {
-        this.ingame = ingame;
-    }
-
     public void thoatPhong() {
-        con.SendRequest(new Message("Thoat Phong", phong));
+        Message message = new Message("Thoat Phong", phong.getId());
+        System.out.println("send thoat phong");
+        con.SendRequest(message);
     }
 
     private static class VaoPhong implements ActionListener {
@@ -193,6 +193,7 @@ public class MainViewController extends Thread {
         System.out.println("Tao Phong func");
         this.phong = (Phong) response.getObject();
         System.out.println(phong.getId());
+        view.setInZoom(true);
         this.phongView = new PhongView(phong, this);
         phongView.setVisible(true);
         int i = 0;
@@ -229,6 +230,17 @@ public class MainViewController extends Thread {
                         }
                         phongView.log(str);
                     }
+                }
+            }
+        });
+        phongView.addExitListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                if (phongView.xacNhan()) {
+                    thoatPhong();
+                    view.setInZoom(false);
+                    phongView.dispose();
                 }
             }
         });
@@ -273,10 +285,14 @@ public class MainViewController extends Thread {
         @Override
         public void actionPerformed(ActionEvent e) {
             //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            System.out.println("Tao Phong btn");
-            Message message = new Message("Tao phong", currentUser);
-            con.SendRequest(message);
-            System.out.println("Tao Phong send");
+            if (!view.getInZomm()) {
+                System.out.println("Tao Phong btn");
+                Message message = new Message("Tao phong");
+                con.SendRequest(message);
+                System.out.println("Tao Phong send");
+            } else {
+                view.Log("ban dang o trong phong");
+            }
         }
     }
 
@@ -359,9 +375,10 @@ public class MainViewController extends Thread {
 
     public void closeGame() {
         view.setVisible(true);
-        if(phongView != null) phongView.setVisible(true);
+        if (phongView != null) {
+            phongView.setVisible(true);
+        }
         game.dispose();
-        ingame = false;
     }
 
     @Override
@@ -409,13 +426,8 @@ public class MainViewController extends Thread {
                         break;
                     }
                     case "List phong": {
-                        ArrayList<Phong> phongs = (ArrayList<Phong>) response.getObject();
-                        this.listPhong = (ArrayList<Phong>) response.getObject();
-                        System.out.println("get object size1 " + listPhong.size());
-                         System.out.println("get object size2 " + phongs.size());
-                        int sizephong = (Integer)response.getMessageInt();
-                        System.out.println("size phong " +sizephong);
-                        view.updateListPhong(listPhong);
+                        ArrayList<Phong> p = (ArrayList<Phong>) response.getObject();
+                        view.updateListPhong(p);
                         break;
                     }
                     case "update status": {
@@ -430,9 +442,49 @@ public class MainViewController extends Thread {
                         phongView.updateListUserStatus(this.phong);
                         break;
                     }
-                    case "update listUser": {
+                    case "update phong": {
                         ArrayList<NguoiChoi> list = (ArrayList<NguoiChoi>) response.getObject();
+                        for (int i = 0; i < list.size(); i++) {
+                            System.out.println("user " + list.get(i).getFullName());
+                        }
+                        phong.setDsng(list);
+                        System.out.println("update phong " + list.size());
                         phongView.updateListUser(list);
+                        break;
+                    }
+                    case "add phong": {
+                        Phong p = (Phong) response.getObject();
+                        System.out.println("add phong " + p.getId());
+                        this.listPhong.add(p);
+                        view.updateListPhong(listPhong);
+                        break;
+                    }
+                    case "remove phong": {
+                        System.out.println("in remove phong");
+                        int idPhong = (Integer) response.getMessageInt();
+                        System.out.println("xoa phong " + idPhong);
+                        for (Phong p : listPhong) {
+                            if (p.getId() == idPhong) {
+                                listPhong.remove(p);
+                                view.updateListPhong(listPhong);
+                                break;
+                            } else {
+                                System.out.println("ko co phong");
+                            }
+                        }
+                        break;
+                    }
+                    case "remove user":{
+                        int idUser = (Integer) response.getMessageInt();
+                        ArrayList<NguoiChoi> listUser = new ArrayList<>();
+                        listUser = phong.getDsng();
+                        int i = 0;
+                        for(;i<listUser.size();i++){
+                            if(listUser.get(i).getId() == idUser) break;
+                        }
+                        listUser.remove(i);
+                        phong.setDsng(listUser);
+                        phongView.updateListUser(listUser);
                         break;
                     }
                     default: {
