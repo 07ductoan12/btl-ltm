@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Client.ControlListener;
 
 import Client.View.GameView;
@@ -14,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -23,10 +20,7 @@ import model.NguoiChoi;
 import model.Phong;
 import model.TranDau;
 
-/**
- *
- * @author toan
- */
+
 public class MainViewController extends Thread {
 
     private Timer timerTurn = new Timer("Timer");
@@ -44,7 +38,8 @@ public class MainViewController extends Thread {
     private ArrayList<Phong> listPhong;
     private PhongView phongView;
     private Phong phong;
-
+    
+    
     public MainViewController(MainView view, Connection con, NguoiChoi currentUser) {
         this.con = con;
         this.view = view;
@@ -72,11 +67,12 @@ public class MainViewController extends Thread {
 
     private void FuncStartGame() throws InterruptedException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
+        
         this.tranDau = (TranDau) response.getObject();
 //                        JOptionPane.showMessageDialog(dashboard, "Đối thủ đã chấp nhận yêu cầu thách đấu của bạn!!!");
         view.setVisible(false);
         if (phongView != null && phongView.isVisible()) {
+            phongView.dispose();
             phongView.setVisible(false);
         }
         game = new GameView(tranDau, this, view);
@@ -152,6 +148,7 @@ public class MainViewController extends Thread {
 
     public void thoatPhong() {
         Message message = new Message("Thoat Phong", phong.getId());
+        phong = null;
         System.out.println("send thoat phong");
         con.SendRequest(message);
     }
@@ -219,6 +216,7 @@ public class MainViewController extends Thread {
                         Message message = new Message("start game");
                         message.setMessageInt(phong.getId());
                         con.SendRequest(message);
+                        phongView.dispose();
                         System.out.println("go game");
                     } else {
                         String str = "";
@@ -320,7 +318,7 @@ public class MainViewController extends Thread {
             timerTurn = new Timer(turn + "");
             timerStart.schedule(timerTask, 0, delay);
         } catch (Exception e) {
-
+            
         }
     }
 
@@ -335,7 +333,7 @@ public class MainViewController extends Thread {
             this.totalTime = total;
             TimerTask timerTask = new TimerTask() {
                 @Override
-                public void run() {
+                public void run() {                                   
                     if (totalTime > 0) {
                         game.setTimeLabelStatus(true);
                         game.setTimeLabel(totalTime);
@@ -444,9 +442,6 @@ public class MainViewController extends Thread {
                     }
                     case "update phong": {
                         ArrayList<NguoiChoi> list = (ArrayList<NguoiChoi>) response.getObject();
-                        for (int i = 0; i < list.size(); i++) {
-                            System.out.println("user " + list.get(i).getFullName());
-                        }
                         phong.setDsng(list);
                         System.out.println("update phong " + list.size());
                         phongView.updateListUser(list);
@@ -485,6 +480,19 @@ public class MainViewController extends Thread {
                         listUser.remove(i);
                         phong.setDsng(listUser);
                         phongView.updateListUser(listUser);
+                        break;
+                    }
+                    case "Fix phong":
+                    {
+                        Phong p = (Phong) response.getObject();
+                        int i =0;
+                        for(;i<listPhong.size();i++){
+                            if(p.getId() == listPhong.get(i).getId()){
+                                break;
+                            }
+                        }
+                        listPhong.set(i, p);
+                        view.updateListPhong(listPhong);
                         break;
                     }
                     default: {

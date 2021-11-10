@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import model.Message;
 import model.NguoiChoi;
 import model.TranDau;
-
 /**
  *
  * @author 07duc
@@ -96,14 +95,16 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
         timeStartLabel = new javax.swing.JLabel();
         timeLabel = new javax.swing.JLabel();
         resultLabel = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnBao.setText("Bao");
+        btnBao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/p.png"))); // NOI18N
 
-        btnBua.setText("Búa");
+        btnBua.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/r.png"))); // NOI18N
 
-        btnKeo.setText("Kéo");
+        btnKeo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/s.png"))); // NOI18N
 
         btnExit.setText("Thoát");
 
@@ -131,80 +132,98 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
         resultLabel.setForeground(new java.awt.Color(51, 51, 51));
         resultLabel.setText("Bao thắng búa: lengan thắng");
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/boy.png"))); // NOI18N
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/boy.png"))); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addComponent(scoreUser1)
+                .addGap(26, 26, 26)
+                .addComponent(jLabel2)
+                .addGap(83, 83, 83)
+                .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(username2)
-                    .addComponent(scoreUser2))
-                .addGap(118, 118, 118))
+                .addComponent(jLabel3)
+                .addGap(31, 31, 31))
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(108, 108, 108)
-                        .addComponent(timeStartLabel))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(168, 168, 168)
-                        .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(160, 160, 160)
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(turnLabel)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(72, 72, 72)
+                .addComponent(username1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addComponent(timeStartLabel)
+                .addGap(57, 57, 57)
+                .addComponent(username2)
+                .addGap(88, 88, 88))
             .addGroup(layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 33, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(username1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(60, 60, 60)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnBao)
-                        .addGap(93, 93, 93)
+                        .addGap(91, 91, 91)
                         .addComponent(btnBua)
+                        .addGap(77, 77, 77)
+                        .addComponent(btnKeo))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(scoreUser1)
+                                .addGap(310, 310, 310))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGap(97, 97, 97)
+                                .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnExit)
-                            .addComponent(btnKeo))
-                        .addGap(61, 61, 61))))
+                        .addComponent(scoreUser2)
+                        .addContainerGap(78, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(219, 219, 219)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnExit)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(31, 31, 31)
+                        .addComponent(turnLabel)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(19, 19, 19)
                 .addComponent(btnExit)
-                .addGap(11, 11, 11)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(turnLabel))
-                .addGap(18, 18, 18)
-                .addComponent(timeStartLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                .addComponent(timeLabel)
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(timeStartLabel)
+                            .addComponent(username2)
+                            .addComponent(username1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(jLabel3))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(87, 87, 87)
+                                .addComponent(timeLabel))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(73, 73, 73)
+                        .addComponent(jLabel2)))
+                .addGap(94, 94, 94)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(username1)
-                    .addComponent(username2))
-                .addGap(44, 44, 44)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(scoreUser1)
-                    .addComponent(scoreUser2))
+                    .addComponent(scoreUser2)
+                    .addComponent(scoreUser1))
                 .addGap(23, 23, 23)
                 .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBao)
+                .addGap(33, 33, 33)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnBua)
-                    .addComponent(btnKeo))
-                .addGap(98, 98, 98))
+                    .addComponent(btnKeo)
+                    .addComponent(btnBao))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         pack();
@@ -251,6 +270,8 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnKeo;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel resultLabel;
     private javax.swing.JLabel scoreUser1;
     private javax.swing.JLabel scoreUser2;
@@ -262,62 +283,51 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
     // End of variables declaration//GEN-END:variables
 
     public void setTimeLabelStatus(boolean status) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         turnLabel.setVisible(status);
     }
 
     public void setTurnLabel(int turn) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         turnLabel.setText(turn + "");
     }
 
     public void setTimeStartLabelStatus(boolean status) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         timeStartLabel.setVisible(status);
     }
 
     public void setTimeStartLabel(int time) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         timeStartLabel.setText("Ván đấu sẽ bắt đầu trong " + time + "s");
     }
 
     public void setResultLabelStatus(boolean status) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         resultLabel.setVisible(status);
     }
 
     public void setTimeLabel(int time) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         timeLabel.setText(time + "s");
     }
 
     public void addKeoButtonListener(ActionListener keo) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         btnKeo.addActionListener(keo);
     }
 
     public void addBuaButtonListener(ActionListener bua) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         btnBua.addActionListener(bua);
     }
 
     public void addBaoButtonListener(ActionListener bao) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         btnBao.addActionListener(bao);
     }
 
     public void addExitButtonListener(ActionListener exit) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         btnExit.addActionListener(exit);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     public void setResultLabel(String rs) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         this.resultLabel.setText(rs);
     }
 }

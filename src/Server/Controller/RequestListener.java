@@ -347,6 +347,7 @@ public class RequestListener extends Thread {
                 listOos.get(phong.getDsng().get(0).getId()).writeObject(new Message("update phong", listUser));
                 oos.writeObject(new Message("Phong duoc tao", phong));
                 oos.writeObject(new Message("update phong", listUser));
+                sendFixPhong(phong);
                 break;
             }
         }
@@ -427,7 +428,11 @@ public class RequestListener extends Thread {
             listPhong.remove(i);
         } else {
             listOos.get(listPhong.get(i).getDsng().get(0).getId()).writeObject(new Message("remove user", this.currentUser.getId()));
+            sendFixPhong(listPhong.get(i));
         }
     }
-    
+    public void sendFixPhong(Phong phong){
+        Message message = new Message("Fix phong", phong);
+        FuncSendAll(message);
+    }
 }
