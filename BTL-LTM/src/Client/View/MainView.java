@@ -11,6 +11,7 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.NguoiChoi;
+import model.Phong;
 
 /**
  *
@@ -23,17 +24,29 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
      */
     DefaultTableModel model1;
     DefaultTableModel model2;
+    DefaultTableModel model3;
     ArrayList<NguoiChoi> userList;
+    ArrayList<Phong> listPhong;
+    private boolean inZoom;
+
     public MainView() {
         initComponents();
         btnChallenge.addActionListener(this);
         model1 = (DefaultTableModel) tableUser.getModel();
-        model2 = (DefaultTableModel)bangXepHang.getModel();
-        
+        model2 = (DefaultTableModel) bangXepHang.getModel();
+        model3 = (DefaultTableModel) tablePhong.getModel();
 //        ArrayList<NguoiChoi> listUser = new ArrayList<>();
 //        listUser.add(new NguoiChoi());
 //        listUser.add(new NguoiChoi());
 //        updateListUser(listUser);
+    }
+
+    public void setInZoom(boolean b) {
+        inZoom = b;
+    }
+
+    public boolean getInZomm() {
+        return inZoom;
     }
 
     /**
@@ -55,6 +68,10 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
         tableUser = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         bangXepHang = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tablePhong = new javax.swing.JTable();
+        btnTaoPhong = new javax.swing.JButton();
+        btnVaoPhong = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,28 +105,47 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
 
         jTabbedPane1.addTab("Bảng xếp hạng", jScrollPane2);
 
+        tablePhong.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Ma phong", "Chu phong", "So luong nguoi", "Trang thai"
+            }
+        ));
+        jScrollPane3.setViewportView(tablePhong);
+
+        jTabbedPane1.addTab("Phong", jScrollPane3);
+
+        btnTaoPhong.setText("Tạo phòng");
+
+        btnVaoPhong.setText("Vào phòng");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(userNameLabel)
-                                .addGap(143, 143, 143)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(scoreLabel))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(120, 120, 120)
-                        .addComponent(btnChallenge)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(userNameLabel)
+                        .addGap(143, 143, 143)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scoreLabel)))
                 .addContainerGap(44, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(93, 93, 93)
+                .addComponent(btnChallenge)
+                .addGap(100, 100, 100)
+                .addComponent(btnTaoPhong)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnVaoPhong)
+                .addGap(115, 115, 115))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,7 +159,10 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(btnChallenge)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnChallenge)
+                    .addComponent(btnTaoPhong)
+                    .addComponent(btnVaoPhong))
                 .addGap(39, 39, 39))
         );
 
@@ -168,12 +207,16 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable bangXepHang;
     private javax.swing.JButton btnChallenge;
+    private javax.swing.JButton btnTaoPhong;
+    private javax.swing.JButton btnVaoPhong;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel scoreLabel;
+    private javax.swing.JTable tablePhong;
     private javax.swing.JTable tableUser;
     private javax.swing.JLabel userNameLabel;
     // End of variables declaration//GEN-END:variables
@@ -187,7 +230,15 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
         btnChallenge.addActionListener(cha);
     }
 
-    public void updateListUser(ArrayList<NguoiChoi> userList,int currentID) {
+    public void btnTaoPhong(ActionListener tp) {
+        btnTaoPhong.addActionListener(tp);
+    }
+
+    public void btnVaoPhong(ActionListener join) {
+        btnVaoPhong.addActionListener(join);
+    }
+
+    public void updateListUser(ArrayList<NguoiChoi> userList, int currentID) {
         model1.setRowCount(0);
         model2.setRowCount(0);
         this.userList = userList;
@@ -200,28 +251,44 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
                 str = "Online";
             } else if (user.getUserStatus() == 2) {
                 str = "Ingame";
-            } else if(user.getUserStatus() == 0){
+            } else if (user.getUserStatus() == 0) {
                 str = "offline";
             }
             if (user.getUserStatus() > 0 && user.getId() != currentID) {
                 model1.addRow(new Object[]{
-                    user.getUsername(),user.getFullName(), str
+                    user.getUsername(), user.getFullName(), str
                 });
             }
             model2.addRow(new Object[]{
-                ++i,user.getUsername(),user.getFullName(),user.getWin(),user.getLose(),user.getDraw(),str
+                ++i, user.getUsername(), user.getFullName(), user.getWin(), user.getLose(), user.getDraw(), str
             });
         }
     }
 
-    public NguoiChoi getSelectUser(){
-        int row  = tableUser.getSelectedRow();
-        if(row >= 0){
-            String username = ((DefaultTableModel)tableUser.getModel()).getValueAt(row,0).toString();
+    public void updateListPhong(ArrayList<Phong> listPhong) {
+        model3.setRowCount(0);
+        this.listPhong = listPhong;
+        System.out.println("size list phong " + this.listPhong.size());
+        for (Phong phong : this.listPhong) {
+            String str = "";
+            if (phong.getPassword().equals("")) {
+                str = "public";
+            } else {
+                str = "private";
+            }
+            model3.addRow(new Object[]{
+                phong.getId(), phong.getDsng().get(0).getFullName(), phong.getDsng().size() + "/2", str
+            });
+        }
+    }
+
+    public NguoiChoi getSelectUser() {
+        int row = tableUser.getSelectedRow();
+        if (row >= 0) {
+            String username = ((DefaultTableModel) tableUser.getModel()).getValueAt(row, 0).toString();
             System.out.println(username);
-            for(NguoiChoi user: this.userList){
-                if(user.getUsername().equals(username))
-                {
+            for (NguoiChoi user : this.userList) {
+                if (user.getUsername().equals(username)) {
                     System.out.println(username);
                     return user;
                 }
@@ -229,11 +296,28 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
         }
         return null;
     }
-    
-    public void Log(String msg){
+
+    public Phong getSelectPhong() {
+        int row = tablePhong.getSelectedRow();
+        if (row >= 0) {
+            System.out.println(this.listPhong.size());
+            int idphong = (Integer) ((DefaultTableModel) tablePhong.getModel()).getValueAt(row, 0);
+            System.out.println("select " + idphong);
+            for (Phong phong : this.listPhong) {
+                System.out.println(phong.getId());
+                if (phong.getId() == idphong) {
+                    System.out.println("chon phong" + idphong);
+                    return phong;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void Log(String msg) {
         JOptionPane.showMessageDialog(this, msg);
     }
-    
+
     public void setUserNameView(String userNameString) {
         userNameLabel.setText(userNameString);
     }

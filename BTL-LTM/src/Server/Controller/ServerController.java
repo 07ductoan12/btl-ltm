@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -41,10 +41,11 @@ public class ServerController {
         HashMap<Integer, ObjectInputStream> listOis = new HashMap<>();
         HashMap<Integer, ObjectOutputStream> listOos = new HashMap<>();
         ArrayList<TranDau> tranDaus = new ArrayList<>();
+        ArrayList<Phong> listPhong = new ArrayList<>();
         while (true) {
             Socket socket = serverSocket.accept();
             view.log("Connecet success to: " + socket);
-            RequestListener requestListener = new RequestListener(socket,listOis,listOos,listSocket,tranDaus);
+            RequestListener requestListener = new RequestListener(socket,listOis,listOos,listSocket,tranDaus,listPhong);
             requestListener.start();
         }
     }

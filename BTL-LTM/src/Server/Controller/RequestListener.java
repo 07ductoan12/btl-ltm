@@ -26,7 +26,7 @@ import model.*;
  * @author toan
  */
 public class RequestListener extends Thread {
-
+    
     private Socket socket;
     private NguoiChoi currentUser;
     private ObjectInputStream ois;
@@ -43,14 +43,16 @@ public class RequestListener extends Thread {
     static HashMap<Integer, String> listNuocChoi;
     private Message request;
     ArrayList<TranDau> listTranDau;
-
+    ArrayList<Phong> listPhong;
+    
     public RequestListener(Socket socket, HashMap<Integer, ObjectInputStream> listOis,
-            HashMap<Integer, ObjectOutputStream> listOos, HashMap<NguoiChoi, Socket> listSocket, ArrayList<TranDau> tranDaus)
+            HashMap<Integer, ObjectOutputStream> listOos, HashMap<NguoiChoi, Socket> listSocket, ArrayList<TranDau> tranDaus, ArrayList<Phong> listPhong)
             throws IOException {
         this.listSocket = listSocket;
         this.listOis = listOis;
         this.listOos = listOos;
         this.listTranDau = tranDaus;
+        this.listPhong = listPhong;
         listNuocChoi = new HashMap<>();
         listNuocChoi.put(0, "Không chọn");
         listNuocChoi.put(1, "Kéo");
@@ -66,7 +68,7 @@ public class RequestListener extends Thread {
         ois = new ObjectInputStream(this.socket.getInputStream());
         oos = new ObjectOutputStream(this.socket.getOutputStream());
     }
-
+    
     @Override
     public void run() {
         while (true) {
@@ -105,8 +107,31 @@ public class RequestListener extends Thread {
                         FunctionGetGame();
                         break;
                     }
+                    case "Tao phong": {
+                        FuncTaoPhong();
+                        break;
+                    }
+                    case "vao phong": {
+                        FuncVaoPhong();
+                        break;
+                    }
                     case "Close game": {
                         FunctionCloseGame();
+                        break;
+                    }
+                    case "start game": {
+                        FuncStartGame();
+                        break;
+                    }
+                    case "san sang": {
+                        FuncSS();
+                        break;
+                    }
+                    case "Thoat Phong": {
+                        funcThoatPhong();
+                        break;
+                    }
+                    default: {
                         break;
                     }
                 }
@@ -123,7 +148,7 @@ public class RequestListener extends Thread {
             }
         }
     }
-
+    
     private void FunctionLogin() throws IOException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         view.log("Nguoi dung login");
@@ -153,22 +178,37 @@ public class RequestListener extends Thread {
         oos.writeObject(response);
         if (response.getMessage().equals("Login success")) {
             FunctionPlayerOnl();
+            FunctionGetListPhong();
         }
     }
-
-    private void FunctionPlayerOnl() {
-        ArrayList<NguoiChoi> listUserOnl = userDAO.getListUser(0);
+    
+    public void FunctionGetListPhong() {
+        Message message = new Message("List phong", this.listPhong);
+        FuncSendAll(message);
+    }
+    
+    public void addPhongToList(Phong phong) {
+        Message message = new Message("add phong", phong);
+        FuncSendAll(message);
+    }
+    
+    public void FuncSendAll(Message message) {
         Set<Integer> keys = listOos.keySet();
-        for (Integer i : keys) {
+        keys.forEach(i -> {
             try {
-                listOos.get(i).writeObject(new Message("List user online", listUserOnl));
+                listOos.get(i).writeObject(message);
             } catch (IOException ex) {
                 Logger.getLogger(RequestListener.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        //writeObject(new Message("List user online", listUserOnl));
+        });
     }
-
+    
+    private void FunctionPlayerOnl() {
+        ArrayList<NguoiChoi> listUserOnl = userDAO.getListUser(0);
+        Message message = new Message("List user online", listUserOnl);
+        FuncSendAll(message);
+    }
+    
     private void FunctionChallenge() throws IOException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         NguoiChoi competitor = (NguoiChoi) this.request.getObject();
@@ -176,7 +216,7 @@ public class RequestListener extends Thread {
         System.out.println(competitor.getId());
         listOos.get(competitor.getId()).writeObject(new Message("Challenge from", currentUser));
     }
-
+    
     private void FunctionAccept() throws IOException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         NguoiChoi competitor = (NguoiChoi) this.request.getObject();
@@ -187,7 +227,7 @@ public class RequestListener extends Thread {
         listOos.get(this.currentUser.getId()).writeObject(response);
         FunctionPlayerOnl();
     }
-
+    
     private void FunctionDecline() throws IOException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         NguoiChoi competitor = (NguoiChoi) request.getObject();
@@ -195,14 +235,14 @@ public class RequestListener extends Thread {
         Message reponse = new Message("Decline", competitor.getUsername() + " decline");
         listOos.get(competitor.getId()).writeObject(reponse);
     }
-
+    
     private void FunctionSendResult() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         NguoiChoiVanChoi ncvc = (NguoiChoiVanChoi) request.getObject();
         view.log(ncvc.getNguoiChoi().getUsername() + " choose: " + listNuocChoi.get(ncvc.getNuocChoi()));
         ncvcDAO.updateNCVC(ncvc);
     }
-
+    
     private void FunctionGetResultTurn() throws IOException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.\
         NguoiChoiVanChoi ncvc = (NguoiChoiVanChoi) request.getObject();
@@ -213,7 +253,7 @@ public class RequestListener extends Thread {
         response.setObject(rs);
         oos.writeObject(response);
     }
-
+    
     private void FunctionGetGame() throws IOException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         TranDau td = (TranDau) request.getObject();
@@ -221,13 +261,14 @@ public class RequestListener extends Thread {
         view.log(currentUser.getUsername() + " get result game: " + rs);
         Message response = new Message();
         response.setMessage("Result game");
-//        userDAO.updateUserStatus(currentUser.getId(), 1);
+        userDAO.updateUserStatus(currentUser.getId(), 1);
         response.setObject(rs);
         oos.writeObject(response);
+        FunctionPlayerOnl();
     }
-
+    
     public void initGame(NguoiChoi user1, NguoiChoi user2) {
-
+        
         tranDau = tranDauDAO.createTranDau();
         tranDau.setIdUser(user1.getId(), user2.getId());
         user1.setUserStatus(2);
@@ -235,7 +276,7 @@ public class RequestListener extends Thread {
         user2.setUserStatus(2);
         userDAO.updateStatus(user2);
         ArrayList<VanChoi> listVanChoi = new ArrayList<>();
-
+        
         for (int i = 1; i <= 3; i++) {
             VanChoi vanChoi = vanChoiDAO.createTurn(tranDau.getId());
             NguoiChoiVanChoi ncvc1 = ncvcDAO.createNCVC(user1.getId(), vanChoi.getId());
@@ -248,17 +289,17 @@ public class RequestListener extends Thread {
             vanChoi.setNcvc2(ncvc2);
             listVanChoi.add(vanChoi);
         }
-
+        
         tranDau.setListVanChoi(listVanChoi);
         listTranDau.add(tranDau);
     }
-
+    
     private void FunctionCloseGame() throws IOException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         System.out.println("Server.Controller.RequestListener.FunctionCloseGame()");
-        int idTranDau = (Integer) request.getObject();
+        int idTranDau = (Integer) request.getMessageInt();
         int i = 0;
-        if (listTranDau.size() != 0) {
+        if (!listTranDau.isEmpty()) {
             for (; i < listTranDau.size(); i++) {
                 if (listTranDau.get(i).getId() == idTranDau) {
                     userDAO.updateUserStatus(listTranDau.get(i).getIdUser1(), 1);
@@ -270,8 +311,128 @@ public class RequestListener extends Thread {
                     break;
                 }
             }
+            listTranDau.remove(i);
         }
-        listTranDau.remove(i);
         FunctionPlayerOnl();
+    }
+    
+    private void FuncTaoPhong() throws IOException, InterruptedException {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Tao Phong server");
+        ArrayList<NguoiChoi> dsng = new ArrayList<>();
+        dsng.add(currentUser);
+        Phong phong = new Phong(dsng);
+        oos.writeObject(new Message("Phong duoc tao", phong));
+        this.listPhong.add(phong);
+        addPhongToList(phong);
+        System.out.println("size list phong sau add " + listPhong.size());
+    }
+    
+    private void FuncVaoPhong() throws IOException {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("vao phong server");
+        NguoiChoi nc = (NguoiChoi) request.getObject();
+        System.out.println(nc.getFullName());
+        int idPhong = (Integer) request.getMessageInt();
+        for (Phong phong : listPhong) {
+            if (phong.getId() == idPhong) {
+                ArrayList<NguoiChoi> listUser = new ArrayList<>(2);
+                listUser.add(phong.getDsng().get(0));
+                listUser.add(currentUser);
+                phong.setDsng(listUser);
+                for(int i=0;i<phong.getDsng().size();i++){
+                    System.out.println("user name user in zoom " + phong.getDsng().get(i).getFullName());   
+                }
+                System.out.println("size phong sau khi add user " + nc.getFullName() + " " + phong.getDsng().size());
+                listOos.get(phong.getDsng().get(0).getId()).writeObject(new Message("update phong", listUser));
+                oos.writeObject(new Message("Phong duoc tao", phong));
+                oos.writeObject(new Message("update phong", listUser));
+                sendFixPhong(phong);
+                break;
+            }
+        }
+    }
+    
+    private void FuncSS() throws IOException {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int idPhong = (Integer) request.getMessageInt();
+        //int idNc = (Integer)request.getObject();
+        NguoiChoi nc = (NguoiChoi) request.getObject();
+        for (Phong phong : listPhong) {
+            if (phong.getId() == idPhong) {
+                if (phong.getDsng().get(0).getId() == nc.getId()) {
+                    if (phong.getUserStatus1() == 0) {
+                        phong.setUserStatus1(1);
+                    } else {
+                        phong.setUserStatus1(0);
+                    }
+                } else {
+                    if (phong.getUserStatus2() == 0) {
+                        phong.setUserStatus2(1);
+                    } else {
+                        phong.setUserStatus2(0);
+                    }
+                }
+                if (phong.getDsng().size() == 2) {
+                    if (nc.getId() == phong.getDsng().get(0).getId()) {
+                        oos.writeObject(new Message("update status", nc.getId(), phong.getUserStatus1()));
+                        listOos.get(phong.getDsng().get(1).getId()).writeObject(new Message("update status", nc.getId(), phong.getUserStatus1()));
+                    } else {
+                        oos.writeObject(new Message("update status", nc.getId(), phong.getUserStatus2()));
+                        listOos.get(phong.getDsng().get(0).getId()).writeObject(new Message("update status", nc.getId(), phong.getUserStatus2()));
+                    }
+                } else {
+                    oos.writeObject(new Message("update status", nc.getId(), phong.getUserStatus1()));
+                }
+                break;
+            }
+        }
+    }
+    
+    private void FuncStartGame() throws IOException {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int idphong = (Integer) request.getMessageInt();
+        for (Phong phong : listPhong) {
+            if (phong.getId() == idphong) {
+                NguoiChoi nc1 = phong.getDsng().get(0);
+                NguoiChoi nc2 = phong.getDsng().get(1);
+                initGame(nc1, nc2);
+                Message response = new Message("Start game", tranDau);
+                listOos.get(nc1.getId()).writeObject(response);
+                listOos.get(nc2.getId()).writeObject(response);
+                FunctionPlayerOnl();
+                break;
+            }
+        }
+    }
+    
+    private void funcThoatPhong() throws IOException {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int idPhong = (Integer) request.getMessageInt();
+        int i = 0;
+        for(;i<listPhong.size();i++){
+            if(listPhong.get(i).getId() == idPhong){
+                ArrayList<NguoiChoi> listNc = listPhong.get(i).getDsng();
+                int j = 0;
+                for(;j<listNc.size();j++){
+                    if(listNc.get(j).getId() == currentUser.getId()) break;
+                }
+                listNc.remove(j);
+                listPhong.get(i).setDsng(listNc);
+                break;
+            }
+        }
+        if(listPhong.get(i).getDsng().isEmpty()){
+            Message message = new Message("remove phong", listPhong.get(i).getId());
+            FuncSendAll(message);
+            listPhong.remove(i);
+        } else {
+            listOos.get(listPhong.get(i).getDsng().get(0).getId()).writeObject(new Message("remove user", this.currentUser.getId()));
+            sendFixPhong(listPhong.get(i));
+        }
+    }
+    public void sendFixPhong(Phong phong){
+        Message message = new Message("Fix phong", phong);
+        FuncSendAll(message);
     }
 }

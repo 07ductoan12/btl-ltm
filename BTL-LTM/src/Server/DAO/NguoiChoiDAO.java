@@ -13,10 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.NguoiChoi;
 
-/**
- *
- * @author Okami
- */
 public class NguoiChoiDAO extends DAOServer {
 
     private final String checkLoginSQL = "SELECT * FROM nguoichoi WHERE username = ? AND password = ?";
@@ -24,11 +20,29 @@ public class NguoiChoiDAO extends DAOServer {
     private final String updateStatusSQL = "UPDATE nguoichoi SET userStatus = ?, win = ?, draw = ?, lose = ? WHERE id = ?";
     private final String updateStatusUser = "UPDATE nguoichoi SET userStatus = ? WHERE id = ?";
     private final String getListUserSQL = "SELECT * FROM nguoichoi WHERE userStatus >= ?";
-
+    private final String registerSQL = "INSERT INTO nguoichoi VALUES (?,?,?,?,?,?,?,?)";
     public NguoiChoiDAO() {
         super();
     }
 
+//    public NguoiChoi userReg(NguoiChoi user){
+//        try{
+//            PreparedStatement preparedStatement = con.prepareStatement(registerSQL);
+//            preparedStatement.setString(1,"8");
+//            preparedStatement.setString(2, user.getUsername());
+//            preparedStatement.setString(3, user.getPassword());
+//            preparedStatement.setString(4, null);
+//            preparedStatement.setString(5, "0");
+//            preparedStatement.setString(6, "0");
+//            preparedStatement.setString(7, "0");
+//            preparedStatement.setString(8, "0");
+//            int res = preparedStatement.executeUpdate();
+//        } catch(SQLException ex){
+//            
+//        }
+//        return null;
+//    }
+    
     public NguoiChoi checkLogin(NguoiChoi user) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement(checkLoginSQL);

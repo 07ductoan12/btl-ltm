@@ -6,6 +6,7 @@ package Client.ControlListener;
 
 import Client.View.GameView;
 import Client.View.MainView;
+import Client.View.PhongView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -19,6 +20,7 @@ import javax.swing.WindowConstants;
 import javax.swing.text.View;
 import model.Message;
 import model.NguoiChoi;
+import model.Phong;
 import model.TranDau;
 
 /**
@@ -35,20 +37,25 @@ public class MainViewController extends Thread {
     private Connection con;
     private ArrayList<NguoiChoi> listUser;
     private NguoiChoi currentUser;
-    private boolean ingame;
     private GameView game;
     private TranDau tranDau;
     private Message response;
     private int turn;
+    private ArrayList<Phong> listPhong;
+    private PhongView phongView;
+    private Phong phong;
 
     public MainViewController(MainView view, Connection con, NguoiChoi currentUser) {
         this.con = con;
         this.view = view;
         this.currentUser = currentUser;
-        ingame = false;
         this.view.setVisible(true);
+        view.setInZoom(false);
+        listPhong = new ArrayList<>();
         view.challengeListener(new challenge(view, con));
         view.setUserNameView(currentUser.getFullName());
+        view.btnTaoPhong(new taoPhong(view, con, this.currentUser));
+        view.btnVaoPhong(new VaoPhong(view, con, this.currentUser));
         view.setScoreView(currentUser.getWin() + "/" + currentUser.getLose() + "/" + currentUser.getDraw());
     }
 
@@ -66,19 +73,14 @@ public class MainViewController extends Thread {
     private void FuncStartGame() throws InterruptedException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
-//        tranDau = (TranDau) response.getObject();
-//        this.game = new GameView(tranDau, view);
-//        GameViewController gameController = new GameViewController(con, game, tranDau, currentUser, this.view);
-//        game.setVisible(true);
-//        ingame = true;
-//
-//        view.setVisible(false);
-//        turn = 1;
-//        newTurn();
         this.tranDau = (TranDau) response.getObject();
 //                        JOptionPane.showMessageDialog(dashboard, "Đối thủ đã chấp nhận yêu cầu thách đấu của bạn!!!");
         view.setVisible(false);
-        game = new GameView(tranDau, this,view);
+        if (phongView != null && phongView.isVisible()) {
+            phongView.dispose();
+            phongView.setVisible(false);
+        }
+        game = new GameView(tranDau, this, view);
         game.addKeoButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -149,14 +151,102 @@ public class MainViewController extends Thread {
         newTurn();
     }
 
-    public void setIngame(boolean ingame) {
-        this.ingame = ingame;
+    public void thoatPhong() {
+        Message message = new Message("Thoat Phong", phong.getId());
+        phong = null;
+        System.out.println("send thoat phong");
+        con.SendRequest(message);
+    }
+
+    private static class VaoPhong implements ActionListener {
+
+        MainView view;
+        Connection con;
+        NguoiChoi currentUser;
+
+        public VaoPhong(MainView view, Connection con, NguoiChoi nc) {
+            this.view = view;
+            this.con = con;
+            this.currentUser = nc;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            Phong phong = view.getSelectPhong();
+            if (phong != null) {
+                System.out.println("send request vao phong");
+                Message message = new Message("vao phong", currentUser, phong.getId());
+                con.SendRequest(message);
+            } else {
+                System.out.println("phong null");
+            }
+        }
     }
 
     private void FuncDecline() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         String message = (String) response.getObject();
         view.Log(message);
+    }
+
+    private void FuncTaoPhong() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Tao Phong func");
+        this.phong = (Phong) response.getObject();
+        System.out.println(phong.getId());
+        view.setInZoom(true);
+        this.phongView = new PhongView(phong, this);
+        phongView.setVisible(true);
+        int i = 0;
+        phongView.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        System.out.println(phong.getDsng().size());
+        phongView.addSanSangListener(new ActionListener() {
+            int i = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                System.out.println("chon ss" + i++);
+                phongView.setTextBtnSS();
+                con.SendRequest(new Message("san sang", currentUser, phong.getId()));
+            }
+        });
+        phongView.addStartGameListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                if (currentUser.getId() == phong.getDsng().get(0).getId()) {
+                    if (phong.getUserStatus1() == 1 && phong.getUserStatus2() == 1) {
+                        Message message = new Message("start game");
+                        message.setMessageInt(phong.getId());
+                        con.SendRequest(message);
+                        phongView.dispose();
+                        System.out.println("go game");
+                    } else {
+                        String str = "";
+                        if (phong.getUserStatus1() != 1) {
+                            str += "nguoi choi 1 chua ss";
+                        }
+                        if (phong.getUserStatus1() != 2) {
+                            str += "nguoi choi 1 chua ss";
+                        }
+                        phongView.log(str);
+                    }
+                }
+            }
+        });
+        phongView.addExitListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                if (phongView.xacNhan()) {
+                    thoatPhong();
+                    view.setInZoom(false);
+                    phongView.dispose();
+                }
+            }
+        });
     }
 
     private static class challenge implements ActionListener {
@@ -183,8 +273,30 @@ public class MainViewController extends Thread {
         }
     }
 
-    public Message getMessage() {
-        return this.response;
+    private static class taoPhong implements ActionListener {
+
+        MainView view;
+        Connection con;
+        NguoiChoi currentUser;
+
+        public taoPhong(MainView view, Connection con, NguoiChoi nc) {
+            this.view = view;
+            this.con = con;
+            this.currentUser = nc;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            if (!view.getInZomm()) {
+                System.out.println("Tao Phong btn");
+                Message message = new Message("Tao phong");
+                con.SendRequest(message);
+                System.out.println("Tao Phong send");
+            } else {
+                view.Log("ban dang o trong phong");
+            }
+        }
     }
 
     public void newTurn() {
@@ -266,10 +378,12 @@ public class MainViewController extends Thread {
 
     public void closeGame() {
         view.setVisible(true);
+        if (phongView != null) {
+            phongView.setVisible(true);
+        }
         game.dispose();
-        ingame = false;
     }
-    
+
     @Override
     public void run() {
         while (true) {
@@ -279,6 +393,10 @@ public class MainViewController extends Thread {
                     case "List user online": {
                         this.listUser = (ArrayList<NguoiChoi>) response.getObject();
                         view.updateListUser(listUser, currentUser.getId());
+                        break;
+                    }
+                    case "Phong duoc tao": {
+                        FuncTaoPhong();
                         break;
                     }
                     case "Challenge from": {
@@ -307,7 +425,79 @@ public class MainViewController extends Thread {
                     }
                     case "Close game": {
                         System.out.println("close game");
-                        game.dispose();
+                        closeGame();
+                        break;
+                    }
+                    case "List phong": {
+                        ArrayList<Phong> p = (ArrayList<Phong>) response.getObject();
+                        view.updateListPhong(p);
+                        break;
+                    }
+                    case "update status": {
+                        int status = (Integer) response.getMessageInt();
+                        int id = (Integer) response.getObject();
+                        if (phong.getDsng().get(0).getId() == id) {
+                            this.phong.setUserStatus1(status);
+                        } else {
+                            this.phong.setUserStatus2(status);
+                        }
+                        System.out.println("set tatus");
+                        phongView.updateListUserStatus(this.phong);
+                        break;
+                    }
+                    case "update phong": {
+                        ArrayList<NguoiChoi> list = (ArrayList<NguoiChoi>) response.getObject();
+                        phong.setDsng(list);
+                        System.out.println("update phong " + list.size());
+                        phongView.updateListUser(list);
+                        break;
+                    }
+                    case "add phong": {
+                        Phong p = (Phong) response.getObject();
+                        System.out.println("add phong " + p.getId());
+                        this.listPhong.add(p);
+                        view.updateListPhong(listPhong);
+                        break;
+                    }
+                    case "remove phong": {
+                        System.out.println("in remove phong");
+                        int idPhong = (Integer) response.getMessageInt();
+                        System.out.println("xoa phong " + idPhong);
+                        for (Phong p : listPhong) {
+                            if (p.getId() == idPhong) {
+                                listPhong.remove(p);
+                                view.updateListPhong(listPhong);
+                                break;
+                            } else {
+                                System.out.println("ko co phong");
+                            }
+                        }
+                        break;
+                    }
+                    case "remove user":{
+                        int idUser = (Integer) response.getMessageInt();
+                        ArrayList<NguoiChoi> listUser = new ArrayList<>();
+                        listUser = phong.getDsng();
+                        int i = 0;
+                        for(;i<listUser.size();i++){
+                            if(listUser.get(i).getId() == idUser) break;
+                        }
+                        listUser.remove(i);
+                        phong.setDsng(listUser);
+                        phongView.updateListUser(listUser);
+                        break;
+                    }
+                    case "Fix phong":
+                    {
+                        Phong p = (Phong) response.getObject();
+                        int i =0;
+                        for(;i<listPhong.size();i++){
+                            if(p.getId() == listPhong.get(i).getId()){
+                                break;
+                            }
+                        }
+                        listPhong.set(i, p);
+                        view.updateListPhong(listPhong);
                         break;
                     }
                     default: {

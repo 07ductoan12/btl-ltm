@@ -7,7 +7,6 @@ package Client.View;
 
 import Client.ControlListener.Connection;
 import Client.ControlListener.LoginController;
-import Client.ControlListener.MainViewController;
 
 /**
  *

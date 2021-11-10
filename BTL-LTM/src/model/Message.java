@@ -11,16 +11,37 @@ import java.io.Serializable;
  *
  * @author Okami
  */
-public class Message implements Serializable{
+public class Message implements Serializable {
+
     private String message;
+    private int messageInt;
     private Object object;
 
     public Message() {
     }
 
+    public Message(String message, Object object, int mess) {
+        this.message = message;
+        this.messageInt = mess;
+        this.object = object;
+    }
+
     public Message(String message, Object object) {
         this.message = message;
         this.object = object;
+    }
+
+    public Message(String message, int messInt) {
+        this.message = message;
+        this.messageInt = messInt;
+    }
+
+    public int getMessageInt() {
+        return messageInt;
+    }
+
+    public void setMessageInt(int messageInt) {
+        this.messageInt = messageInt;
     }
 
     public Message(String message) {
@@ -36,10 +57,10 @@ public class Message implements Serializable{
     }
 
     public Object getObject() {
-        return object;
+        return this.object;
     }
 
     public void setObject(Object object) {
         this.object = object;
-    }    
+    }
 }

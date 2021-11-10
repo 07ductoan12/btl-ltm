@@ -86,7 +86,7 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
         btnBao = new javax.swing.JButton();
         btnBua = new javax.swing.JButton();
         btnKeo = new javax.swing.JButton();
-        btunExit = new javax.swing.JButton();
+        btnExit = new javax.swing.JButton();
         username1 = new javax.swing.JLabel();
         username2 = new javax.swing.JLabel();
         scoreUser1 = new javax.swing.JLabel();
@@ -105,7 +105,7 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
 
         btnKeo.setText("Kéo");
 
-        btunExit.setText("Thoát");
+        btnExit.setText("Thoát");
 
         username1.setText("User 1");
 
@@ -172,7 +172,7 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
                         .addComponent(btnBua)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btunExit)
+                            .addComponent(btnExit)
                             .addComponent(btnKeo))
                         .addGap(61, 61, 61))))
         );
@@ -180,7 +180,7 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(btunExit)
+                .addComponent(btnExit)
                 .addGap(11, 11, 11)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -248,8 +248,8 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBao;
     private javax.swing.JButton btnBua;
+    private javax.swing.JButton btnExit;
     private javax.swing.JButton btnKeo;
-    private javax.swing.JButton btunExit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel resultLabel;
     private javax.swing.JLabel scoreUser1;
@@ -308,7 +308,7 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
 
     public void addExitButtonListener(ActionListener exit) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        btnBao.addActionListener(exit);
+        btnExit.addActionListener(exit);
     }
 
     @Override
