@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import model.Message;
 import model.NguoiChoi;
 import model.TranDau;
+
 /**
  *
  * @author 07duc
@@ -36,7 +37,7 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
     MainView mainView;
     MainViewController controller;
 
-    public GameView(TranDau tranDau,MainViewController controller,MainView view) {
+    public GameView(TranDau tranDau, MainViewController controller, MainView view) {
         initComponents();
         turn = 1;
         this.mainView = view;
@@ -45,11 +46,11 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
         this.tranDau = tranDau;
         this.user1 = this.tranDau.getListVanChoi().get(0).getNcvc1().getNguoiChoi();
         this.user2 = this.tranDau.getListVanChoi().get(0).getNcvc2().getNguoiChoi();
-//        this.username1.setText(this.tranDau.getUserName1());
-//        this.username2.setText(this.tranDau.getUserName2());
+        this.username1.setText(this.user1.getFullName());
+        this.username2.setText(this.user2.getFullName());
         this.resultLabel.setVisible(false);
         addWindowListener(new WindowAdapter() {
-            
+
             @Override
             public void windowClosing(WindowEvent e) {
                 //super.windowClosing(e); //To change body of generated methods, choose Tools | Templates.
@@ -73,6 +74,7 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
         }
         return false;
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -116,8 +118,10 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
 
         scoreUser2.setText("Điểm: ");
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Ván:");
 
+        turnLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         turnLabel.setText("2");
 
         timeStartLabel.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
@@ -126,11 +130,10 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
 
         timeLabel.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         timeLabel.setForeground(new java.awt.Color(255, 0, 51));
-        timeLabel.setText("1");
+        timeLabel.setText("1s");
 
         resultLabel.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         resultLabel.setForeground(new java.awt.Color(51, 51, 51));
-        resultLabel.setText("Bao thắng búa: lengan thắng");
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/boy.png"))); // NOI18N
 
@@ -141,89 +144,84 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel2)
-                .addGap(83, 83, 83)
-                .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3)
-                .addGap(31, 31, 31))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(72, 72, 72)
+                .addGap(53, 53, 53)
                 .addComponent(username1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
-                .addComponent(timeStartLabel)
-                .addGap(57, 57, 57)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(username2)
-                .addGap(88, 88, 88))
+                .addGap(60, 60, 60))
             .addGroup(layout.createSequentialGroup()
-                .addGap(60, 60, 60)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnBao)
-                        .addGap(91, 91, 91)
-                        .addComponent(btnBua)
-                        .addGap(77, 77, 77)
-                        .addComponent(btnKeo))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnBao)
+                            .addComponent(jLabel2))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(timeStartLabel))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(scoreUser1)
-                                .addGap(310, 310, 310))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGap(97, 97, 97)
-                                .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(scoreUser2)
-                        .addContainerGap(78, Short.MAX_VALUE))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(219, 219, 219)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnExit)
+                                .addGap(72, 72, 72)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(turnLabel))))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(31, 31, 31)
-                        .addComponent(turnLabel)))
+                        .addGap(60, 60, 60)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(151, 151, 151)
+                                .addComponent(btnBua)
+                                .addGap(79, 79, 79)
+                                .addComponent(btnKeo))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(btnExit)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(scoreUser1)
+                                    .addGap(298, 298, 298)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel3)
+                                        .addComponent(scoreUser2))))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(134, 134, 134)
+                        .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addGap(26, 26, 26)
                 .addComponent(btnExit)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(turnLabel))
+                .addGap(41, 41, 41)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(username1)
+                    .addComponent(username2))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(timeStartLabel)
-                            .addComponent(username2)
-                            .addComponent(username1))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(38, 38, 38)
-                                .addComponent(jLabel3))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(87, 87, 87)
-                                .addComponent(timeLabel))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(jLabel2)))
+                        .addComponent(timeLabel)
+                        .addGap(52, 52, 52)
+                        .addComponent(timeStartLabel))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addGap(94, 94, 94)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(scoreUser2)
                     .addComponent(scoreUser1))
-                .addGap(23, 23, 23)
+                .addGap(18, 18, 18)
                 .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
+                .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnBua)
                     .addComponent(btnKeo)
                     .addComponent(btnBao))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
 
         pack();
@@ -290,6 +288,18 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
         turnLabel.setText(turn + "");
     }
 
+    public void SetScoreUser1(String str) {
+        scoreUser1.setText(str);
+    }
+
+    public void SetTimeLable(boolean b){
+        timeLabel.setVisible(b);
+    }
+    
+    public void SetScoreUser2(String str) {
+        scoreUser2.setText(str);
+    }
+
     public void setTimeStartLabelStatus(boolean status) {
         timeStartLabel.setVisible(status);
     }
@@ -324,10 +334,10 @@ public class GameView extends javax.swing.JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+
     }
 
     public void setResultLabel(String rs) {
-        this.resultLabel.setText(rs);
+        resultLabel.setText(rs);
     }
 }

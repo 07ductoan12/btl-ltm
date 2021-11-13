@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package Client.ControlListener;
 
 import Client.View.GameView;
@@ -10,7 +14,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -20,7 +23,10 @@ import model.NguoiChoi;
 import model.Phong;
 import model.TranDau;
 
-
+/**
+ *
+ * @author toan
+ */
 public class MainViewController extends Thread {
 
     private Timer timerTurn = new Timer("Timer");
@@ -38,14 +44,17 @@ public class MainViewController extends Thread {
     private ArrayList<Phong> listPhong;
     private PhongView phongView;
     private Phong phong;
-    
-    
+    private boolean ingame;
+    private boolean setResultGame = false;
+    private String resultGame = "";
+
     public MainViewController(MainView view, Connection con, NguoiChoi currentUser) {
         this.con = con;
         this.view = view;
         this.currentUser = currentUser;
         this.view.setVisible(true);
         view.setInZoom(false);
+        this.ingame = false;
         listPhong = new ArrayList<>();
         view.challengeListener(new challenge(view, con));
         view.setUserNameView(currentUser.getFullName());
@@ -67,15 +76,20 @@ public class MainViewController extends Thread {
 
     private void FuncStartGame() throws InterruptedException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
+        ingame = true;
+        resultGame = "";
+
+        System.out.println("dat imgame bang true");
         this.tranDau = (TranDau) response.getObject();
 //                        JOptionPane.showMessageDialog(dashboard, "Đối thủ đã chấp nhận yêu cầu thách đấu của bạn!!!");
         view.setVisible(false);
         if (phongView != null && phongView.isVisible()) {
-            phongView.dispose();
             phongView.setVisible(false);
         }
         game = new GameView(tranDau, this, view);
+        game.setResultLabelStatus(false);
+        game.SetScoreUser1("Điểm 0");
+        game.SetScoreUser2("Điểm 0");
         game.addKeoButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -148,7 +162,25 @@ public class MainViewController extends Thread {
 
     public void thoatPhong() {
         Message message = new Message("Thoat Phong", phong.getId());
-        phong = null;
+//        ArrayList<NguoiChoi> listUser = new ArrayList<>();
+//        listUser = phong.getDsng();
+//        int i = 0;
+//        for (; i < listUser.size(); i++) {
+//            if (listUser.get(i).getId() == currentUser.getId()) {
+//                break;
+//            }
+//        }
+//        listUser.remove(i);
+//        phong.setDsng(listUser);
+//        i = 0;
+//        for (; i < listPhong.size(); i++) {
+//            if (listPhong.get(i).getId() == phong.getId()) {
+//                break;
+//            }
+//        }
+//        listPhong.set(i, phong);
+//        view.updateListPhong(listPhong);
+//        phong = null;
         System.out.println("send thoat phong");
         con.SendRequest(message);
     }
@@ -216,7 +248,6 @@ public class MainViewController extends Thread {
                         Message message = new Message("start game");
                         message.setMessageInt(phong.getId());
                         con.SendRequest(message);
-                        phongView.dispose();
                         System.out.println("go game");
                     } else {
                         String str = "";
@@ -295,31 +326,44 @@ public class MainViewController extends Thread {
     }
 
     public void newTurn() {
-        try {
-            timeStart = 3;
-            game.setTimeLabelStatus(false);
+        if (ingame) {
             game.setTurnLabel(turn);
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    if (timeStart > 0) {
-                        game.setTimeStartLabelStatus(true);
-                        game.setTimeStartLabel(timeStart);
-                        timeStart = timeStart - 1;
-                    } else if (timeStart == 0) {
-                        timeStart = timeStart - 1;
-                        game.setTimeStartLabelStatus(false);
-                        setTimeCounter(15);
-                        timerStart.cancel();
+            try {
+                timeStart = 3;
+                game.setTimeLabelStatus(false);
+                TimerTask timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (timeStart > 0) {
+                            game.SetTimeLable(false);
+                            game.setTimeStartLabelStatus(true);
+                            game.setTimeStartLabel(timeStart);
+                            timeStart = timeStart - 1;
+//                            if (setResultGame) {
+//                                game.setResultLabel(resultGame);
+//                                game.setResultLabelStatus(true);
+//                            }
+                        } else if (timeStart == 0) {
+                            game.SetTimeLable(true);
+                            game.setResultLabelStatus(false);
+                            timeStart = timeStart - 1;
+                            game.setTimeStartLabelStatus(false);
+                            setTimeCounter(7);
+                            timerStart.cancel();
+                        }
                     }
-                }
-            };
-            long delay = 1000L;
-            timerTurn = new Timer(turn + "");
-            timerStart.schedule(timerTask, 0, delay);
-        } catch (Exception e) {
-            
+                };
+                long delay = 1000L;
+                timerTurn = new Timer(turn + "");
+                timerStart.schedule(timerTask, 0, delay);
+            } catch (Exception e) {
+
+            }
         }
+    }
+
+    public boolean getInGame() {
+        return ingame;
     }
 
     public void sendCloseGame() {
@@ -332,26 +376,42 @@ public class MainViewController extends Thread {
             game.setResultLabelStatus(false);
             this.totalTime = total;
             TimerTask timerTask = new TimerTask() {
+                ;
                 @Override
-                public void run() {                                   
+                public void run() {
+                    if (!ingame) {
+                        System.out.println("dat total time = 0");
+                        totalTime = 0;
+                        this.cancel();
+                    }
                     if (totalTime > 0) {
                         game.setTimeLabelStatus(true);
                         game.setTimeLabel(totalTime);
                         totalTime = totalTime - 1;
-                    } else if (totalTime == 0) {
+                    } else if (totalTime == 0 && ingame == true) {
                         totalTime = totalTime - 1;
                         game.setTimeLabelStatus(false);
                         game.setResultLabelStatus(true);
-                        if (tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNguoiChoi().equals(currentUser)) {
+                        if (tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNguoiChoi().equals(currentUser) && turn <= 3) {
                             System.out.println(tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNuocChoi());
                             Message request = new Message("Get result turn", tranDau.getListVanChoi().get(turn - 1).getNcvc1());
+                            if (turn == 3) {
+                                request.setMessageInt(0);
+                            } else {
+                                request.setMessageInt(1);
+                            }
                             con.SendRequest(request);
-                        } else {
+                        } else if (turn <= 3) {
                             System.out.println(tranDau.getListVanChoi().get(turn - 1).getNcvc2().getNuocChoi());
                             Message request = new Message("Get result turn", tranDau.getListVanChoi().get(turn - 1).getNcvc2());
+                            if (turn == 3) {
+                                request.setMessageInt(0);
+                            } else {
+                                request.setMessageInt(1);
+                            }
                             con.SendRequest(request);
                         }
-
+                        game.SetTimeLable(false);
                         turn = turn + 1;
                         if (turn < 4) {
                             newTurn();
@@ -363,9 +423,11 @@ public class MainViewController extends Thread {
                     }
                 }
             };
-            long delay = 1000L;
-            timerStart = new Timer(turn + "");
-            timerTurn.schedule(timerTask, 0, delay);
+            if (ingame) {
+                long delay = 1000L;
+                timerStart = new Timer(turn + "");
+                timerTurn.schedule(timerTask, 0, delay);
+            }
         } catch (Exception e) {
 
         }
@@ -376,6 +438,10 @@ public class MainViewController extends Thread {
         if (phongView != null) {
             phongView.setVisible(true);
         }
+        ingame = false;
+        System.out.println("dat ingame bang false");
+        this.tranDau = null;
+        System.out.println("dat timetotal = 0");
         game.dispose();
     }
 
@@ -407,15 +473,18 @@ public class MainViewController extends Thread {
                         break;
                     }
                     case "Result turn": {
-                        String rs = (String) response.getObject();
-                        System.out.println(rs);
-                        game.setResultLabel(rs);
+                        resultGame = (String) response.getObject();
+                        System.out.println(resultGame);
+                        game.setResultLabel(resultGame);
+                        game.setResultLabelStatus(true);
+                        setResultGame = true;
                         break;
                     }
                     case "Result game": {
                         String rs = (String) response.getObject();
                         System.out.println(rs);
                         closeGame();
+                        view.Log(rs);
                         break;
                     }
                     case "Close game": {
@@ -469,30 +538,48 @@ public class MainViewController extends Thread {
                         }
                         break;
                     }
-                    case "remove user":{
+                    case "remove user": {
                         int idUser = (Integer) response.getMessageInt();
                         ArrayList<NguoiChoi> listUser = new ArrayList<>();
                         listUser = phong.getDsng();
                         int i = 0;
-                        for(;i<listUser.size();i++){
-                            if(listUser.get(i).getId() == idUser) break;
+                        for (; i < listUser.size(); i++) {
+                            if (listUser.get(i).getId() == idUser) {
+                                break;
+                            }
                         }
                         listUser.remove(i);
                         phong.setDsng(listUser);
                         phongView.updateListUser(listUser);
+                        i = 0;
+                        for (; i < listPhong.size(); i++) {
+                            if (listPhong.get(i).getId() == phong.getId()) {
+                                break;
+                            }
+                        }
+                        listPhong.set(i, phong);
+                        view.updateListPhong(listPhong);
                         break;
                     }
-                    case "Fix phong":
-                    {
+                    case "Fix phong": {
                         Phong p = (Phong) response.getObject();
-                        int i =0;
-                        for(;i<listPhong.size();i++){
-                            if(p.getId() == listPhong.get(i).getId()){
+                        int i = 0;
+                        for (; i < listPhong.size(); i++) {
+                            if (p.getId() == listPhong.get(i).getId()) {
                                 break;
                             }
                         }
                         listPhong.set(i, p);
                         view.updateListPhong(listPhong);
+                        break;
+                    }
+                    case "Diem user": {
+                        System.out.println("Nhan diem");
+                        Message mes = (Message) response.getObject();
+                        int curId = (Integer) mes.getObject();
+                        System.out.println("this id " + curId);
+                        game.SetScoreUser1("Diem: " + (Integer) response.getMessageInt());
+                        game.SetScoreUser2("Diem: " + (Integer) mes.getMessageInt());
                         break;
                     }
                     default: {
