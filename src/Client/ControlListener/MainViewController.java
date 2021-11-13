@@ -94,9 +94,9 @@ public class MainViewController extends Thread {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNguoiChoi().equals(currentUser)) {
-                    tranDau.getListVanChoi().get(turn - 1).getNcvc1().setNuocChoi(1);
+                    tranDau.getListVanChoi().get(turn - 1).getNcvc1().setNuocChoi(3);
                 } else {
-                    tranDau.getListVanChoi().get(turn - 1).getNcvc2().setNuocChoi(1);
+                    tranDau.getListVanChoi().get(turn - 1).getNcvc2().setNuocChoi(3);
                 }
                 if (tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNguoiChoi().equals(currentUser)) {
                     System.out.println(tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNuocChoi());
@@ -132,9 +132,9 @@ public class MainViewController extends Thread {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNguoiChoi().equals(currentUser)) {
-                    tranDau.getListVanChoi().get(turn - 1).getNcvc1().setNuocChoi(3);
+                    tranDau.getListVanChoi().get(turn - 1).getNcvc1().setNuocChoi(1);
                 } else {
-                    tranDau.getListVanChoi().get(turn - 1).getNcvc2().setNuocChoi(3);
+                    tranDau.getListVanChoi().get(turn - 1).getNcvc2().setNuocChoi(1);
                 }
                 if (tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNguoiChoi().equals(currentUser)) {
                     System.out.println(tranDau.getListVanChoi().get(turn - 1).getNcvc1().getNuocChoi());
