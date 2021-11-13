@@ -87,6 +87,7 @@ public class MainViewController extends Thread {
             phongView.setVisible(false);
         }
         game = new GameView(tranDau, this, view);
+        game.setTitle(currentUser.getFullName());
         game.setResultLabelStatus(false);
         game.SetScoreUser1("Điểm 0");
         game.SetScoreUser2("Điểm 0");
