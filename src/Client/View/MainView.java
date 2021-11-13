@@ -31,6 +31,7 @@ public class MainView extends javax.swing.JFrame implements ActionListener {
 
     public MainView() {
         initComponents();
+        this.setLocationRelativeTo(null);
         btnChallenge.addActionListener(this);
         model1 = (DefaultTableModel) tableUser.getModel();
         model2 = (DefaultTableModel) bangXepHang.getModel();
